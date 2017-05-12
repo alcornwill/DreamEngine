@@ -1,0 +1,51 @@
+{
+    "name": "default_resources",
+    "3D_files": [
+        {
+            "path": "assets/models/quad.fbx",
+            "flags": ["meshes"]
+        },
+        {
+            "path": "assets/models/color cube.fbx",
+            "flags": ["meshes"]
+        }
+    ],
+    "programs": {
+        "default": {
+            "vert": "dreamengine/shaders/default.vert",
+            "frag": "dreamengine/shaders/default.frag",
+            "defaults": {
+                "diffuse_color": [1.0, 1.0, 1.0, 1.0],
+                "cutoff": 1.0,
+                "tex0.transform": [0.0, 0.0, 1.0, 1.0],
+                "tex1.transform": [0.0, 0.0, 1.0, 1.0],
+                "tex2.transform": [0.0, 0.0, 1.0, 1.0],
+                "t2_mix": 0.0
+            }
+        },
+        "passthrough": {
+            "vert": "dreamengine/shaders/passthrough.vert",
+            "frag": "dreamengine/shaders/passthrough.frag"
+        },
+        "skybox": {
+            "vert": "dreamengine/shaders/skybox.vert",
+            "frag": "dreamengine/shaders/skybox.frag"
+        }
+    },
+    "materials": {
+        "default": {
+            "program": "default"
+        }
+    },
+    "render layers": {
+        "default": {
+            "mask": 1,
+            "clear_color": [0.0, 0.0, 0.0, 0.0],
+            "depth": 0
+        },
+        "skybox": {
+            "mask": 4,
+            "depth": 1
+        }
+    }
+}

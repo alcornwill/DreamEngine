@@ -1,0 +1,201 @@
+how set up development workstation for DreamEngine (working title)
+	the DreamEngine folder only contains the source code for the engine, you have to download (and sometimes build) the dependencies
+	(the 'final product' sdk should be a lot easier to install if I can precompile things for any platform and create an installer)		
+		and just runing games should hopefully be as simple as running an .exe, once engine is installed
+	I use Windows 8.1 x64, but it could work on any platform, though many steps will be different
+		and many bugs will need to be fixed
+	requirements:
+		many GB of hard drive space
+		OpenGL 4.0 or better (you will need to update your graphics driver if you haven't done so recently, otherwise you get weird bugs)
+		
+this guide walks you though installing:
+	assimp
+		msvc2015	
+	Qt (for pyqt)
+	python 3.6
+		numpy
+		pygame
+		pyopengl
+		pyqt5
+		pyassimp
+		(pyinstrument for profiling)
+	to actually make games
+		a python IDE (PyCharm is strongly recommended, very good) (I do use Notepad++ as well)
+		a 3D modeling application (blender is strongly recommended, very good)
+		other shit
+			digital painting software / image manipulation (Paint.net, gimp, paint tool sai, I use many)
+			DAW to make busic
+			a midi keyboard
+			a camera
+			(make your own tools!)
+	to build C++
+		ms build tools
+		a C++ compiler (I used MinGW)
+		cmake
+
+--------------------
+		steps:		
+--------------------
+
+assimp:
+	assimp allows us to import 3D models into our application from many formats (.fbx, .obj, ...)
+	it is a C++ API but it comes with a python port called pyassimp, which works very nicely
+	if you are running Windows x64 you don't need to build assimp, you can use the .dll I built
+		(untested though)		
+		install msvc2015
+			run "DreamEngine\vc_redist.x64.exe"
+		copy dll
+			after installed python and installed pyassimp module (see below)
+			copy "DreamEngine\assimp.dll" to site-packages		
+	
+	if that doesn't work you need to build assimp from the sources
+	download assimp 
+		https://github.com/assimp/assimp ('Clone or download' -> 'Download zip')		
+	install ms build tools 2015
+		https://www.microsoft.com/en-us/download/details.aspx?id=48159
+	install Visual C++ Redistributable for Visual Studio 2015
+		(distributing the installer or the .dll's it installs might be illegal)
+		https://www.microsoft.com/en-us/download/details.aspx?id=48145
+	install MinGW
+		just follow this: http://www.mingw.org/wiki/Getting_Started
+		I installed mingw32-core and g++ extension
+		had to add MinGW/bin to path environment variable
+		to build with cmake:
+			cmake -G "MinGW Makefiles"
+			mingw32-make
+	install cmake		
+		https://cmake.org/download/		
+		run installer
+			TICK 'add cmake to path for all users'			
+	build (finally)
+		run cmake gui
+			browse to assimp directory (with CMakeLists.txt file)
+			for the build directory create a folder called 'build' and browse to it
+			press 'configure'
+			choose "MinGW Makefiles"
+				if you choose the wrong one go to: File -> delete cache
+			you can untick all the features you don't need and it will probably make the dll smaller?
+				I unticked all the importers except .fbx, .obj, .ply and .blend
+			press 'generate'
+				red is ok but you shouldn't see any errors
+		build (in command prompt in cmake build directory with 'Makefile' in)
+			"mingw32-make"
+		you will find assimp.dll somewhere in the build folder 
+			it may be called something slightly different, depending on compiler
+			pyassimp will still find it as long as it has 'assimp' somewhere in the name
+
+	(top tip)
+		cmake and mingw can be used from the command line to make+build automatically
+			CD project_dir
+			MKDIR build
+			CD build
+			cmake -G "MinGW Makefiles" ..
+			mingw32-make
+			
+QT
+	(ok not actually sure you need this. probably do though)
+	QT is the gui library used with DreamEngine (pyQt)
+	unfortunately QT is a huge library with loads of stuff we don't need. we are only interested in the .dlls, but it's easier to just install everything
+	install
+		http://info.qt.io/download-qt-for-application-development
+			(you do NOT need to buy QT)
+		run the installer
+		skip the login page
+		you can untick everything except latest (stable) version (5.8 for me)
+			(I'm using QTCharts as well)
+
+python
+	python is the perfect programming language, everything about it is perfect in every way
+	installing python is not straightforward unfortunately (read carefully)
+	install
+		download latest version from https://www.python.org/downloads/
+			(3.6.1 at time of writing)			
+			on windows, the default install location will be Program Files
+			but this means you have to use administrator command prompt to install modules, which I find annoying
+			so install it somewhere that doesn't require administrator privilages				
+				run the installer
+				UNTICK 'Install launcher for all users'
+				TICK add python to path
+				choose 'Customize installation'
+				Optional Features
+					leave as they are, click 'Next'
+				Advanced Options
+					change 'Customize install location' to:
+						'C:\whatever\...\python36' (or whatever)
+					(tick 'download debugging symbols'?)
+						pycharm debugging seems to work without it, but maybe it installed it automatically lmao. need to google what it means
+					click 'Next'
+				(you may be prompted to install C runtime binaries, click 'Ok')
+				python will then be installed
+	install modules	
+		install with pip (in windows command prompt "python -m pip install module_name")
+			(ok now that I've done setup.py pycharm should offer to install these, or maybe they will be installed automatically?)
+			numpy
+			pygame
+			pyopengl
+			(optional)
+				pyqt5
+				pyinstrument (profiling)
+		pyassimp
+			this does exist on pypi, but I'm not sure how recent that version is
+			since you downloaded pyassimp just install from that anyway
+				open a command prompt in 'assimp/port/PyAssimp'
+					"python setup.py install"					
+			either way you will still need assimp.dll (it goes in "site-packages\pyassimp\")
+
+pycharm
+	you can use whatever IDE you want, but pycharm is good
+	cool features:
+		when you read a .frag or .vert file pycharm will offer to install an addon for glsl syntax highlighting!
+	installation
+		download pycharm 'Community' from https://www.jetbrains.com/pycharm/download/#section=windows
+		run installer and follow instructions
+	running for the first time
+		instead of creating new project, choose 'Open'
+		navigate to DreamEngine/DreamEngine directory
+		the project is loaded but none of the python module depedencies are there
+		when the project has loaded, it should say 'no python interpreter configured for the project'. click 'Configure Python Interpreter'
+		just browse to 'python36/python.exe' (if pycharm hasn't already found it) and continue
+		the red lines should go away now and it should run
+
+that's it! The End
+			
+blender
+	(obviously you only need this if you intend to do 3D modelling)
+	blender has some quirks, I ragequit many times while learning, but you will learn to appreciate it for the miracle that it is
+	cool features:
+		lots of amazing stuff like cycles renderer, simulation, sculpting, material node editor, automatic rigging and uv unwrap, ...
+		blender is written in python, so you can write addons in python. blender has an immediate mode console built in
+		a jaw dropping feature of blender is that you can hover over any GUI element and see the source code!
+	install
+		todo
+	usage
+		todo...
+			
+newb how-tos
+	(todo)
+	use command prompt
+	run as administrator
+	batch files
+	use pycharm
+	why do i have to compile things, what are binaries and source code and .dlls
+	"assimp library not found"
+		you built assimp for the wrong platform/architecture (or didn't build it at all...)
+	python
+		command line			
+		immediate mode
+		how to use pip
+			(on windows) open a command prompt anywhere
+				type "python -m pip install module_name"
+				if you see anyone online telling you to use "pip install module_name" they are using linux				
+		how to use a 'setup.py'
+			modules that don't use pip are usually installed with a setup.py
+			in command prompt run "python setup.py install"
+		site-packages
+			python modules are installed in "python36\Lib\site-packages"
+		basic syntax
+	common errors and pitfalls
+		command "python" not found
+			you didn't add the python36 directory to path environment variable		
+	what is QT, why is it so big and why do i have to install it
+	

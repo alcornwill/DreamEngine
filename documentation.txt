@@ -1,0 +1,6 @@
+todo
+
+IMPORTANT NOTE
+    i edited pyopengl shaders.py
+    commented out lines 104 to 110 where does program validation
+    it is wrong, that is the wrong place to do validation, and it makes compilation fail unnecessarily
