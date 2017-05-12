@@ -1,5 +1,3 @@
-# was thinking about renaming pyEngine64, in keeping with python's obviously named modules
-# or [something]ograph. then can use like verb [something]ography. [something] would be a latin word or something
 
 import code
 import logging
